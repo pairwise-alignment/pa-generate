@@ -1,5 +1,5 @@
 use clap::Parser;
-use generator::GenerateArgs;
+use pa_generate::GenerateArgs;
 use std::{
     io::{BufWriter, Write},
     path::PathBuf,
