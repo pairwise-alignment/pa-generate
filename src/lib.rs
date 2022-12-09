@@ -1,6 +1,6 @@
 use clap::{Parser, ValueEnum};
-use core_lib::{Base, Seq, Sequence};
 use itertools::Itertools;
+use pa_types::{Base, Seq, Sequence};
 use rand::{Rng, SeedableRng};
 use serde::{Deserialize, Serialize};
 

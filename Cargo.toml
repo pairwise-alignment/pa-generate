@@ -12,5 +12,4 @@ serde = "*"
 rand = "*"
 rand_chacha = "*"
 ropey = "*"
-#core-lib = { git = "https://github.com/pairwise-alignment/core-lib" }
-core-lib = { path = "../core-lib" }
+pa-types = { git = "https://github.com/pairwise-alignment/pa-types" }
