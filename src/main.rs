@@ -8,8 +8,7 @@ use std::{
 #[derive(Parser)]
 #[command(author, version, about)]
 struct Cli {
-    /// Location of the output file
-    #[arg()]
+    /// Location of the output `.seq` file.
     output: PathBuf,
 
     #[clap(flatten)]
