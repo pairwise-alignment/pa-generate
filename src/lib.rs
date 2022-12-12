@@ -300,6 +300,9 @@ impl GenerateArgs {
             "seq",
             "Output file must have .seq extension!"
         );
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent).unwrap();
+        }
         let mut f = BufWriter::new(std::fs::File::create(path).unwrap());
         for (a, b) in self.generate() {
             write!(f, ">").unwrap();
