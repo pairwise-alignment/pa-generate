@@ -281,6 +281,23 @@ impl GenerateArgs {
 
         pairs
     }
+
+    pub fn generate_file(&self, path: Path) {
+        assert_eq!(
+            path.extension().unwrap_or_default(),
+            "seq",
+            "Output file must have .seq extension!"
+        );
+        let mut f = BufWriter::new(std::fs::File::create(path).unwrap());
+        for (a, b) in args.generate_args.generate() {
+            write!(f, ">").unwrap();
+            f.write_all(&a).unwrap();
+            writeln!(f).unwrap();
+            write!(f, "<").unwrap();
+            f.write_all(&b).unwrap();
+            writeln!(f).unwrap();
+        }
+    }
 }
 
 // Convenience functions.
