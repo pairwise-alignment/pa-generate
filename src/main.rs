@@ -1,9 +1,6 @@
 use clap::Parser;
 use pa_generate::GenerateArgs;
-use std::{
-    io::{BufWriter, Write},
-    path::PathBuf,
-};
+use std::path::PathBuf;
 
 #[derive(Parser)]
 #[command(author, version, about)]
@@ -17,5 +14,5 @@ struct Cli {
 
 fn main() {
     let args = Cli::parse();
-    args.generate_args.generate_file(args.output);
+    args.generate_args.generate_file(&args.output);
 }

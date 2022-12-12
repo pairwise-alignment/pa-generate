@@ -1,3 +1,8 @@
+use std::{
+    io::{BufWriter, Write},
+    path::Path,
+};
+
 use clap::{Parser, ValueEnum};
 use itertools::Itertools;
 use pa_types::{Base, Seq, Sequence};
@@ -49,20 +54,20 @@ pub enum ErrorModel {
 #[derive(Parser, Clone, Serialize, Deserialize, Debug)]
 pub struct GenerateOptions {
     /// Target length of each generated sequence.
-    #[arg(short = 'n', long, display_order = 3)]
+    #[arg(short = 'n', long)]
     pub length: usize,
 
-    /// Input error rate
-    #[arg(short, long, display_order = 4)]
+    /// Error rate between sequences.
+    #[arg(short, long)]
     pub error_rate: f32,
 
-    /// The type of error to generate
+    /// The type of error to generate.
     #[arg(long, value_enum, default_value_t, value_name = "MODEL")]
     pub error_model: ErrorModel,
 
-    /// The length of a pattern.
+    /// The length of a repeating pattern.
     ///
-    /// Must be positive.
+    /// Must be positive. Default: uniform in [1, sqrt(n)]
     #[arg(long, hide_short_help = true)]
     pub pattern_length: Option<usize>,
 }
@@ -70,25 +75,32 @@ pub struct GenerateOptions {
 /// Options to generate multiple sequence pairs.
 #[derive(Parser, Clone, Serialize, Deserialize, Debug)]
 #[command(author, version, about)]
+#[clap(group(
+    clap::ArgGroup::new("total_size")
+        .multiple(false)
+        .args(&["cnt", "size"]),
+))]
 pub struct GenerateArgs {
     /// Options for generating a single pair.
     #[command(flatten)]
     pub options: GenerateOptions,
 
-    /// RNG seed. Randomized if not set.
-    #[arg(long)]
-    pub seed: Option<u64>,
-
     /// The number of sequence pairs to generate.
-    #[arg(short = 'x', long, default_value_t = 1, display_order = 2)]
-    pub cnt: usize,
+    ///
+    /// Conflicts with --size.
+    #[arg(short = 'x', long, default_value = "1")]
+    pub cnt: Option<usize>,
 
     /// The total input size to generate.
     ///
     /// Generate as many pairs as needed to get to a total number of bases as close
     /// as possible to 2*size.
-    #[arg(short = 's', long, display_order = 2)]
+    #[arg(short = 's', long)]
     pub size: Option<usize>,
+
+    /// RNG seed. Randomized if not set.
+    #[arg(long)]
+    pub seed: Option<u64>,
 }
 
 /// List of characters that can be generated.
@@ -261,7 +273,7 @@ impl GenerateArgs {
                     break;
                 }
             } else {
-                if pairs.len() == self.cnt {
+                if pairs.len() == self.cnt.unwrap() {
                     break;
                 }
             }
@@ -282,14 +294,14 @@ impl GenerateArgs {
         pairs
     }
 
-    pub fn generate_file(&self, path: Path) {
+    pub fn generate_file(&self, path: &Path) {
         assert_eq!(
             path.extension().unwrap_or_default(),
             "seq",
             "Output file must have .seq extension!"
         );
         let mut f = BufWriter::new(std::fs::File::create(path).unwrap());
-        for (a, b) in args.generate_args.generate() {
+        for (a, b) in self.generate() {
             write!(f, ">").unwrap();
             f.write_all(&a).unwrap();
             writeln!(f).unwrap();
