@@ -1,5 +1,5 @@
 use clap::Parser;
-use pa_generate::GenerateArgs;
+use pa_generate::DatasetGenerator;
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -9,7 +9,7 @@ struct Cli {
     output: PathBuf,
 
     #[clap(flatten)]
-    generate_args: GenerateArgs,
+    generate_args: DatasetGenerator,
 }
 
 fn main() {

@@ -52,7 +52,7 @@ pub enum ErrorModel {
 
 /// Options to generate a single pair of sequences.
 #[derive(Parser, Clone, Serialize, Deserialize, Debug)]
-pub struct GenerateOptions {
+pub struct SeqPairGenerator {
     /// Target length of each generated sequence.
     #[arg(short = 'n', long)]
     pub length: usize,
@@ -80,11 +80,12 @@ pub struct GenerateOptions {
         .multiple(false)
         .args(&["cnt", "size"]),
 ))]
-pub struct GenerateArgs {
-    /// Options for generating a single pair.
+pub struct DatasetGenerator {
+    /// Settings for generating a single sequence pair.
     #[command(flatten)]
-    pub options: GenerateOptions,
+    pub settings: SeqPairGenerator,
 
+    // Settings for the number of sequences.
     /// The number of sequence pairs to generate.
     ///
     /// Conflicts with --size.
@@ -161,7 +162,7 @@ pub fn random_sequence(len: usize, rng: &mut impl Rng) -> Sequence {
     (0..len).map(|_| rand_base(rng)).collect()
 }
 
-impl GenerateOptions {
+impl SeqPairGenerator {
     /// Generate a single sequence pair via the given error model.
     pub fn generate(&self, rng: &mut impl Rng) -> (Sequence, Sequence) {
         use ErrorModel::*;
@@ -257,7 +258,7 @@ fn get_rng(seed: Option<u64>) -> rand_chacha::ChaCha8Rng {
     }
 }
 
-impl GenerateArgs {
+impl DatasetGenerator {
     pub fn generate(&self) -> Vec<(Sequence, Sequence)> {
         let mut pairs = vec![];
         let mut prev_len = 0;
@@ -278,7 +279,7 @@ impl GenerateArgs {
                 }
             }
 
-            let (a, b) = self.options.generate(rng);
+            let (a, b) = self.settings.generate(rng);
             prev_len = total_len;
             total_len += a.len() + b.len();
             pairs.push((a, b));
@@ -319,7 +320,7 @@ impl GenerateArgs {
 
 /// Generate a random pair with length n and error rate e.
 pub fn uniform_random(n: usize, e: f32) -> (Sequence, Sequence) {
-    GenerateOptions {
+    SeqPairGenerator {
         length: n,
         error_rate: e,
         error_model: ErrorModel::Uniform,
@@ -330,7 +331,7 @@ pub fn uniform_random(n: usize, e: f32) -> (Sequence, Sequence) {
 
 /// Generate a seeded random pair with length n and error rate e.
 pub fn uniform_seeded(n: usize, e: f32, seed: u64) -> (Sequence, Sequence) {
-    GenerateOptions {
+    SeqPairGenerator {
         length: n,
         error_rate: e,
         error_model: ErrorModel::Uniform,
