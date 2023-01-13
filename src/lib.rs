@@ -54,11 +54,15 @@ pub enum ErrorModel {
 #[derive(Parser, Clone, Serialize, Deserialize, Debug)]
 pub struct SeqPairGenerator {
     /// Target length of each generated sequence.
-    #[arg(short = 'n', long)]
+    // NOTE: Default value is only so that this can be used as an optional part
+    // of other command lines.
+    #[arg(short = 'n', long, default_value_t)]
     pub length: usize,
 
     /// Error rate between sequences.
-    #[arg(short, long)]
+    // NOTE: Default value is only so that this can be used as an optional part
+    // of other command lines.
+    #[arg(short, long, default_value_t)]
     pub error_rate: f32,
 
     /// The type of error to generate.
@@ -96,7 +100,7 @@ pub struct DatasetGenerator {
     ///
     /// Generate as many pairs as needed to get to a total number of bases as close
     /// as possible to 2*size.
-    #[arg(short = 's', long)]
+    #[arg(long)]
     pub size: Option<usize>,
 
     /// RNG seed. Randomized if not set.
