@@ -339,3 +339,24 @@ pub fn uniform_seeded(n: usize, e: f32, seed: u64) -> (Sequence, Sequence) {
     }
     .seeded(seed)
 }
+
+/// Generate a fixed-seed random pair with length n and error rate e.
+pub fn uniform_fixed(n: usize, e: f32) -> (Sequence, Sequence) {
+    uniform_seeded(n, e, 31415)
+}
+
+/// Generate a seeded random pair with length `n`, error rate `e`, according to `error_model`.
+pub fn generate_model(
+    n: usize,
+    e: f32,
+    error_model: ErrorModel,
+    seed: u64,
+) -> (Sequence, Sequence) {
+    SeqPairGenerator {
+        length: n,
+        error_rate: e,
+        error_model,
+        pattern_length: None,
+    }
+    .seeded(seed)
+}
