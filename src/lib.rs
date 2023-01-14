@@ -225,7 +225,7 @@ impl SeqPairGenerator {
                 let len = if let Some(pattern_length) = self.pattern_length {
                     pattern_length
                 } else {
-                    rng.gen_range(1..=(self.length as f32).sqrt() as usize)
+                    rng.gen_range(1..=((self.length as f32).sqrt() as usize).max(1))
                 };
                 let pattern = random_sequence(len, rng);
                 let mut base = pattern
@@ -363,4 +363,16 @@ pub fn generate_model(
         pattern_length: None,
     }
     .seeded(seed)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{generate_model, ErrorModel};
+
+    #[test]
+    fn test() {
+        generate_model(0, 0.0, ErrorModel::Delete, 31415);
+        generate_model(0, 0.0, ErrorModel::NoisyDelete, 31415);
+        generate_model(0, 0.0, ErrorModel::Repeat, 31415);
+    }
 }
