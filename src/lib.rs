@@ -29,11 +29,13 @@ pub enum ErrorModel {
     /// Duplicate a region of size e*n.
     Duplicate,
 
+    /// Combination of NoisyInsert and NoisyDelete.
+    NoisyIndel,
     /// Make an en/2 insertion and apply en/2 noise.
     NoisyInsert,
     /// Make an en/2 deletion and apply en/2 noise.
     NoisyDelete,
-    /// Make an en/2 move and apply en/2 noise.
+    /// Make an en/4 move and apply en/2 noise.
     NoisyMove,
     /// Duplicate a region of size en/2, and apply en/2 noise.
     NoisyDuplicate,
@@ -177,13 +179,21 @@ impl SeqPairGenerator {
             Independent => (0, 0),
             Uniform => (0, muts),
             Delete | Insert | Move | Duplicate => (muts, 0),
-            NoisyInsert | NoisyDelete | NoisyMove | NoisyDuplicate => (muts / 2, muts / 2),
+            NoisyIndel | NoisyInsert | NoisyDelete | NoisyDuplicate => (muts / 2, muts / 2),
+            NoisyMove => (muts / 4, muts / 2),
             Repeat | DifferentRepeat | NestedRepeat | SymmetricRepeat => (0, muts),
         };
 
-        match self.error_model {
+        let error_model = if self.error_model == NoisyIndel {
+            [NoisyInsert, NoisyDelete][rng.gen_range(0..2)]
+        } else {
+            self.error_model
+        };
+
+        match error_model {
             Independent => (a, random_sequence(self.length, rng)),
             Uniform => (a.clone(), mutate(&a, noise, rng)),
+            NoisyIndel => unreachable!(),
             Delete | NoisyDelete => {
                 let mut b = a.clone();
                 let start = rng.gen_range(0..=b.len() - indel_len);
