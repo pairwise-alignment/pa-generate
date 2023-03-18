@@ -58,13 +58,13 @@ pub struct SeqPairGenerator {
     /// Target length of each generated sequence.
     // NOTE: Default value is only so that this can be used as an optional part
     // of other command lines.
-    #[arg(short = 'n', long, default_value_t)]
+    #[arg(short = 'n', long, default_value_t = 1000)]
     pub length: usize,
 
     /// Error rate between sequences.
     // NOTE: Default value is only so that this can be used as an optional part
     // of other command lines.
-    #[arg(short, long, default_value_t)]
+    #[arg(short, long, default_value_t = 0.05)]
     pub error_rate: f32,
 
     /// The type of error to generate.
