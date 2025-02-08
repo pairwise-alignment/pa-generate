@@ -359,6 +359,30 @@ pub fn uniform_fixed(n: usize, e: f32) -> (Sequence, Sequence) {
     uniform_seeded(n, e, 31415)
 }
 
+/// Generate a uniform random sequence.
+pub fn random_seq(len: usize) -> Sequence {
+    random_sequence(len, &mut get_rng(None))
+}
+pub fn random_seq_seeded(len: usize, seed: u64) -> Sequence {
+    random_sequence(len, &mut get_rng(Some(seed)))
+}
+pub fn random_seq_fixed(len: usize) -> Sequence {
+    random_seq_seeded(len, 31415)
+}
+
+/// Generate a pair of independent sequences.
+pub fn independent_random(len: usize) -> (Sequence, Sequence) {
+    let rng = &mut get_rng(None);
+    (random_sequence(len, rng), random_sequence(len, rng))
+}
+pub fn independent_seeded(len: usize, seed: u64) -> (Sequence, Sequence) {
+    let rng = &mut get_rng(Some(seed));
+    (random_sequence(len, rng), random_sequence(len, rng))
+}
+pub fn independent_fixed(len: usize) -> (Sequence, Sequence) {
+    independent_seeded(len, 31415)
+}
+
 /// Generate a seeded random pair with length `n`, error rate `e`, according to `error_model`.
 pub fn generate_model(
     n: usize,
