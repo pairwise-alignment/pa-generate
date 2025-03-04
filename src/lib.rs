@@ -268,7 +268,7 @@ impl SeqPairGenerator {
 pub fn get_rng(seed: Option<u64>) -> rand_chacha::ChaCha8Rng {
     match seed {
         Some(seed) => rand_chacha::ChaCha8Rng::seed_from_u64(seed as u64),
-        None => rand_chacha::ChaCha8Rng::from_entropy(),
+        None => rand_chacha::ChaCha8Rng::from_os_rng(),
     }
 }
 

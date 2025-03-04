@@ -12,9 +12,9 @@ default-run = "pa-generate"
 
 [dependencies]
 clap = {version = "4.0", features = ["derive"]}
-itertools = "*"
-serde = "*"
-rand = "*"
-rand_chacha = "*"
-ropey = "*"
+rand_chacha = "0.9"
 pa-types = { git = "https://github.com/pairwise-alignment/pa-types" }
+rand = "0.9.0"
+serde = "1.0.218"
+itertools = "0.14.0"
+ropey = "1.6.1"
