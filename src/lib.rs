@@ -152,7 +152,7 @@ fn mutate_once(seq: &mut ropey::Rope, rng: &mut impl Rng) {
     }
 }
 
-fn mutate(seq: Seq, mutations: usize, rng: &mut impl Rng) -> Sequence {
+pub fn mutate(seq: Seq, mutations: usize, rng: &mut impl Rng) -> Sequence {
     if mutations == 0 {
         return seq.to_vec();
     }
